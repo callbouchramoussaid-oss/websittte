@@ -1,18 +1,32 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, RefObject } from "react";
+import { useScrollAnimation, scaleIn, fadeInUp, staggerFadeInUp, honeyDripAnimation } from "@/lib/scrollAnimation";
 
 const HoneyScene3D = dynamic(() => import("./HoneyScene3D"), { ssr: false });
 
 export default function HeroSection() {
-  const [scrollY, setScrollY] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
 
+  // Scroll animations
+  useScrollAnimation();
+  
+  // Use useEffect to run animations after refs are populated
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    if (sceneRef.current) scaleIn(sceneRef as RefObject<HTMLElement>, 0.2);
+    if (badgeRef.current) fadeInUp(badgeRef as RefObject<HTMLElement>, 0);
+    if (titleRef.current) fadeInUp(titleRef as RefObject<HTMLElement>, 0.2);
+    if (subtitleRef.current) fadeInUp(subtitleRef as RefObject<HTMLElement>, 0.4);
+    if (ctaRef.current) staggerFadeInUp([ctaRef as RefObject<HTMLElement>], 0.1);
+    if (statsRef.current) fadeInUp(statsRef as RefObject<HTMLElement>, 0.8);
+    if (sceneRef.current) honeyDripAnimation(sceneRef as RefObject<HTMLElement>);
   }, []);
 
   return (
@@ -24,7 +38,7 @@ export default function HeroSection() {
       {/* Background Video */}
       <div
         className="absolute inset-0 z-0"
-        style={{ transform: `translateY(${scrollY * 0.4}px)` }}
+        // Remove the old scroll-based transform
       >
         <video
           ref={videoRef}
@@ -62,7 +76,7 @@ export default function HeroSection() {
       <div className="hex-pattern absolute inset-0 z-1 opacity-30" />
 
       {/* 3D Scene */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
+      <div ref={sceneRef} className="absolute inset-0 z-10 pointer-events-none">
         <HoneyScene3D />
       </div>
 
@@ -72,10 +86,7 @@ export default function HeroSection() {
         style={{ minHeight: "100vh", padding: "2rem" }}
       >
         {/* Badge */}
-        <div
-          className="mb-6 animate-fade-up"
-          style={{ animationDelay: "0.2s", opacity: 0, animationFillMode: "forwards" }}
-        >
+        <div ref={badgeRef} className="mb-6">
           <span
             className="px-6 py-2 rounded-full text-sm font-bold tracking-wider"
             style={{
@@ -90,49 +101,21 @@ export default function HeroSection() {
         </div>
 
         {/* Main Title */}
-        <h1
-          className="text-center mb-4 animate-fade-up"
-          style={{
-            fontSize: "clamp(3rem, 10vw, 7rem)",
-            fontWeight: 900,
-            lineHeight: 1.1,
-            animationDelay: "0.4s",
-            opacity: 0,
-            animationFillMode: "forwards",
-          }}
-        >
+        <h1 ref={titleRef} className="text-center mb-4">
           <span className="text-gradient animate-glow-text">عالم</span>
           <br />
           <span style={{ color: "#fff" }}>العسل</span>
         </h1>
 
         {/* Subtitle */}
-        <p
-          className="text-center mb-8 animate-fade-up"
-          style={{
-            fontSize: "clamp(1rem, 3vw, 1.4rem)",
-            color: "rgba(255,255,255,0.75)",
-            maxWidth: "600px",
-            lineHeight: 1.8,
-            animationDelay: "0.6s",
-            opacity: 0,
-            animationFillMode: "forwards",
-          }}
-        >
+        <p ref={subtitleRef} className="text-center mb-8">
           اكتشف سحر العسل الطبيعي الخام من أجود المناحل العربية.
           <br />
           <span style={{ color: "#F5A623" }}>طبيعي • أصيل • شفاء</span>
         </p>
 
         {/* CTA Buttons */}
-        <div
-          className="flex gap-4 flex-wrap justify-center animate-fade-up"
-          style={{
-            animationDelay: "0.8s",
-            opacity: 0,
-            animationFillMode: "forwards",
-          }}
-        >
+        <div ref={ctaRef} className="flex gap-4 flex-wrap justify-center">
           <a
             href="#products"
             className="px-10 py-4 rounded-full font-bold text-lg transition-all duration-300 animate-pulse-glow"
@@ -179,14 +162,7 @@ export default function HeroSection() {
         </div>
 
         {/* Stats */}
-        <div
-          className="flex gap-8 mt-16 flex-wrap justify-center animate-fade-up"
-          style={{
-            animationDelay: "1s",
-            opacity: 0,
-            animationFillMode: "forwards",
-          }}
-        >
+        <div ref={statsRef} className="flex gap-8 mt-16 flex-wrap justify-center">
           {[
             { num: "+١٠٠", label: "نوع من العسل" },
             { num: "+٥٠٠٠", label: "عميل سعيد" },
