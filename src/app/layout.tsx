@@ -1,5 +1,21 @@
 import type { Metadata } from "next";
+import { Cairo, Amiri } from "next/font/google";
 import "./globals.css";
+
+const cairo = Cairo({
+  subsets: ["arabic"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-cairo",
+  display: "swap",
+});
+
+const amiri = Amiri({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-amiri",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "عالم العسل - أفضل أنواع العسل الطبيعي",
@@ -13,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className="antialiased">
+      <body className={`${cairo.variable} ${amiri.variable} antialiased`}>
         {children}
       </body>
     </html>
