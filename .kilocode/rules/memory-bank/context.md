@@ -102,3 +102,4 @@ export async function GET() {
 |------|---------|
 | Initial | Template created with base setup |
 | 2026-03-30 | Built full 3D Arabic honey website with Three.js, video hero, 7 sections |
+| 2026-03-30 | Fixed CSS @import error — migrated Google Fonts from `@import url()` in CSS to `next/font/google` in layout.tsx |
